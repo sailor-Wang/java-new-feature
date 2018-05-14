@@ -1,13 +1,14 @@
 package com.itasura.feature.stream;
 
 import com.itasura.feature.Person;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * 名    称：
@@ -57,31 +58,42 @@ public class App {
      * 1.获取流
      * @return
      */
-    public static void createStream(){
-        List<Person> list = new ArrayList<Person>();
-        Stream<Person> stream1 = list.stream();
-
+    @Test
+    public void createStream(){
+        List<String> list = new ArrayList<String>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        // 返回一个顺序流
+        Stream<String> stream1 = list.stream();
         Stream<String> stream2 = Stream.of("zhangsan","lisi","wangwu");
-
         String[] names = {"zhangsan","lisi","wangwu"};
+        //由数组创建流
         Stream<String> stream3 = Arrays.stream(names);
+        stream3.forEach(System.out::println);
+        System.out.println("=========我是华丽分割线===========");
+        // 返回一个并行流
+        Stream<String> stream = list.parallelStream();
+        stream.forEach(System.out::println);
+
     }
 
     /**
      * 筛选filter
      * @return
      */
-    public static List<Person> findStudent(){
+    @Test
+    public void findStudent(){
         List<Person> students = list.stream().filter(Person::isStudent).collect(toList());
         // 打印
         students.stream().forEach(System.out::print);
-        return students;
     }
 
     /**
      * 去重distinct
      */
-    public static void distinct(){
+    @Test
+    public void distinct(){
         System.out.println("-- before distinct --"+list);
         list = list.stream().distinct().collect(toList());
         System.out.println("-- after distinct --"+list);
@@ -91,7 +103,8 @@ public class App {
     /**
      * 截取
      */
-    public static void limit(){
+    @Test
+    public void limit(){
         System.out.println("-- before limit --"+list);
         list = list.stream().limit(3).collect(toList());
         System.out.println("-- after limit --"+list);
@@ -100,7 +113,8 @@ public class App {
     /**
      * 跳过
      */
-    public static void skip(){
+    @Test
+    public void skip(){
         System.out.println("-- before skip --"+list);
         list = list.stream().skip(3).collect(toList());
         System.out.println("-- after skip --"+list);
@@ -109,18 +123,58 @@ public class App {
     /**
      *  映射
      */
-    public static void map(){
+    @Test
+    public void map(){
         List<String> result = list.stream().map(Person::getName).collect(toList());
         result.stream().forEach(System.out::println);
     }
 
-    public static void main(String[] args) {
-        //findStudent();
-        //distinct();
-        //limit();
-        //skip();
-        map();
+    /**
+     * 匹配任一元素
+     */
+    @Test
+    public void anyMatch(){
+        Boolean flag = list.stream().anyMatch(Person::isStudent);
+        System.out.println(flag);
     }
+
+    /**
+     * 匹配所有元素
+     */
+    @Test
+    public void allMatch(){
+        Boolean flag = list.stream().allMatch(Person::isStudent);
+        System.out.println(flag);
+    }
+
+    /**
+     * noneMatch与allMatch恰恰相反,它用于判断流中的所有元素是否都不满足指定条件
+     */
+    @Test
+    public void noneMatch(){
+        Boolean flag = list.stream().noneMatch(Person::isStudent);
+        System.out.println(flag);
+    }
+
+    /**
+     * findAny能够从流中随便选一个元素出来，它返回一个Optional类型的元素，实际返回的是第一个元素
+     */
+    @Test
+    public void findAny(){
+        System.out.println("findAny:"+list.stream().findAny().get());
+        System.out.println("findFirst:"+list.stream().findFirst().get());
+    }
+
+    /**
+     * 将流中元素反复结合起来，得到一个值
+     */
+    @Test
+    public void reduce(){
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        Integer sum = list.stream().reduce(0, (x, y) -> x + y);
+        System.out.println(sum);
+    }
+
 
 
 }
